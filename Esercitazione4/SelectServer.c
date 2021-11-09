@@ -309,7 +309,7 @@ int main(int argc, char **argv){
 			close(fout);
             
 			printf("Risultato del conteggio: %i\n", occ);
-			if(occ>0){
+			if(occ>=0){
 				ris=htonl(occ);
 			}
 			if (sendto(udpfd, &ris, sizeof(ris), 0, (struct sockaddr *)&cliaddr, len)<0)
