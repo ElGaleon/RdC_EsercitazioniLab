@@ -58,8 +58,7 @@ int main(int argc, char *argv[]){
 	while (gets(nome_file)){
 
 		/* CREAZIONE E CONNESSIONE SOCKET (BIND IMPLICITA) ----------------- */
-		/* in questo schema è necessario ripetere creazione, settaggio opzioni e connect */
-		/* ad ogni ciclo (DENTRO), perchè il client fa una nuova connect ad ogni ciclo */
+		
 		sd=socket(AF_INET, SOCK_STREAM, 0);
 		if (sd <0){perror("apertura socket "); exit(3);}
 		printf("Creata la socket sd=%d\n", sd);
