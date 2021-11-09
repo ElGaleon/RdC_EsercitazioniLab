@@ -173,12 +173,10 @@ int main(int argc, char **argv){
 				dir=opendir(nome_dir);
                 int len_dir=strlen(nome_dir);
                 if(dir!=NULL){
-//                     write(connfd,"S",1);
+                    write(connfd,"S",1);
                     while((dd=readdir(dir))!=NULL){
-//                         printf("%s\n",dd->d_name);
                        if((strcmp(dd->d_name,".")!=0) && (strcmp(dd->d_name,"..")!=0))
                         {   
-//                             printf("%s\n",dd->d_name);
                             if(dd->d_type == DT_DIR){ /* se è una directory andiamo a cercare nella cartella file e directory di secondo livello */
                                 /* Strutturiamo la stringa per la ricerca nel secondo livello
                                  * Esempio nome_dir/livello2
@@ -201,7 +199,7 @@ int main(int argc, char **argv){
                                         else{
                                             printf("Trovato file %s\n",dd2->d_name);
                                         }
-                                        write(connfd,"S",1);
+                                        
                                         //Copia del nome della directory/file in un buffer per la leggibilità
                                         strcpy(buff,dd2->d_name);
                                         //Invio del buffer contenente il nome della directory/file di 2 livello
