@@ -87,10 +87,13 @@ int main(int argc, char *argv[]){
 		if (ok=='S'){
 			printf("Ricevo i file:\n");
 			while((nread=read(sd, buff, sizeof(buff)))>0){
-				if ((nwrite=write(1, buff, nread))<0){ //print on screen
+                nwrite=write(1, buff, nread);
+                if (nwrite<0){ //print on screen
 					perror("write");
 					break;
 				}
+                printf("\n");
+				
 			}
 			if ( nread<0 ){
 				perror("read");

@@ -20,9 +20,9 @@
 #define STRING_LENGTH 256
 #define LENGTH_FILE_NAME 20
 #define max(a,b) ((a) > (b) ? (a) : (b))
-
+/*	La Request deve essere omogenea a quella del Client*/
 typedef struct{
-    char nome_dir[LENGTH_FILE_NAME];
+    //char nome_dir[LENGTH_FILE_NAME];
 	char nome_file[LENGTH_FILE_NAME];
     char parola[STRING_LENGTH];
 }Request;
@@ -56,13 +56,13 @@ void gestore(int signo){
 int main(int argc, char **argv){
 	int  listenfd, connfd, udpfd, fd_file, nready, maxfdp1;
 	const int on = 1;
-	char buff[DIM_BUFF], nome_file[LENGTH_FILE_NAME], n, nome_dir[LENGTH_FILE_NAME],nome_dir_livello_2[LENGTH_FILE_NAME];
+	char buff[DIM_BUFF], nome_file[LENGTH_FILE_NAME], nome_dir[LENGTH_FILE_NAME],nome_dir_livello_2[LENGTH_FILE_NAME];
     char *fn, *word;
 	fd_set rset;
 	int len, nread, nwrite, num = 0, ris, port;
 	struct sockaddr_in cliaddr, servaddr;
     Request* req =(Request*)malloc(sizeof(Request));
-    FILE *fp;
+    
 
 
 	/* CONTROLLO ARGOMENTI ---------------------------------- */
@@ -172,43 +172,47 @@ int main(int argc, char **argv){
 				{ perror("read"); break; }
 
 				printf("Richiesto direttorio %s\n", nome_dir);
+                //Apriamo la directory richiesta e salviamo il puntatore
 				dir=opendir(nome_dir);
-                int len_dir=strlen(nome_dir);
+                int len_dir=strlen(nome_dir); //lunghezza di nome_dir
+                /* dir esiste */
                 if(dir!=NULL){
-//                     write(connfd,"S",1);
-                    while((dd=readdir(dir))!=NULL){
-//                         printf("%s\n",dd->d_name);
-                       if((strcmp(dd->d_name,".")!=0) && (strcmp(dd->d_name,"..")!=0))
-                        {   
-//                             printf("%s\n",dd->d_name);
-                            if(dd->d_type == DT_DIR){
-//                                 printf("opendir\n");
+                    write(connfd,"S",1); /* Avvisiamo il client che la dirctory richiesta esiste */
+                    while((dd=readdir(dir))!=NULL){ /* leggiamo il contenuto della directory:
+                        leggiamo ciascun file e directory contenuti in essa */
+                       if((strcmp(dd->d_name,".")!=0) && (strcmp(dd->d_name,"..")!=0)) /* escludiamo . e .. dall'eventuale ricerca di un sottolivello*/
+                        {  
+                            if(dd->d_type == DT_DIR){ /* se è una directory andiamo a cercare nella cartella file e directory di secondo livello */
+                                /* Strutturiamo la stringa per la ricerca nel secondo livello
+                                 * Esempio nome_dir/livello2
+                                 */
                                 strcpy(nome_dir_livello_2,nome_dir);
                                 strcat(nome_dir_livello_2,"/");
                                 strcat(nome_dir_livello_2, dd->d_name);
-                                printf("Apro directory: %s\n",nome_dir_livello_2);
-                                dir2=opendir(nome_dir_livello_2);
+                                printf("\nApro directory: %s\n",nome_dir_livello_2);
+                                dir2=opendir(nome_dir_livello_2); // apriamo directory di 2 livello
                                 if(dir2!=NULL){
+                                    /* Logica simile al livello precedente:
+                                     * leggiamo i file e le directory contenute nella directory di 2 livello appena aperta
+                                     * escludendo . e .. */
                                     printf("Secondo livello:\n");
                                     while((dd2=readdir(dir2))!=NULL){
                                     if((strcmp(dd2->d_name,".")!=0) && (strcmp(dd2->d_name,"..")!=0)){
-//                                         printf("\t%s\n",dd2->d_name);
                                         if(dd2->d_type==DT_DIR){
-                                            
                                             printf("Trovata directory %s\n",dd2->d_name);
                                         }
                                         else{
-                                            
                                             printf("Trovato file %s\n",dd2->d_name);
                                         }
-                                //strcpy(buff,dd2->d_name);
-                                //write(connfd,buff,sizeof(buff);
-//                                     }
-                                
+                                        //Copia del nome della directory/file in un buffer per la leggibilità
+                                        strcpy(buff,dd2->d_name);
+                                        //Invio del buffer contenente il nome della directory/file di 2 livello
+                                        write(connfd,buff,strlen(buff)+1);
+                                        }
                                     }
-                                }
+                                printf("Fine secondo livello\n\n");
                                 
-                            }
+                                }
                                 else{
                                     printf("Errore\n");
                                 }
@@ -223,57 +227,26 @@ int main(int argc, char **argv){
                     }
                     closedir(dir);
                 }
-				/*if (dir==NULL){
+				else{
 					printf("direttorio inesistente\n"); 
 					write(connfd, "N", 1);
 				}
-				else{
-					//write(connfd, "S", 1);
-                    printf("S");
-					// TODO:nome dei file nei dir di II liv
-                   while ((dd = readdir(dir)) != NULL){
-                    dir2=opendir(dd->d_name);
-                    if((dd2=readdir(dir2))!=NULL){
-                        
-                    printf("Trovato il direttorio %s\n", dd2-> d_name);
-                    }
-                    else{
-                        printf("%s: Questo è un file\n",dd2->d_name);
-                    }
-                    closedir(dir2);
-                    //write(connfd,dd->d_name,sizeof((dd->d_name)));
-                   /*dir2=opendir(dd-> d_name);
-                   if (dir2==NULL){
-					printf("Trovato il file %s\n", dd-> d_name); 
-                    }
-                    else{
-                        printf("Trovato il direttorio %s\n", dd-> d_name);
-                        while ((dd2 = readdir(dir2)) != NULL){
-                            printf("Trovato elemento %s\n", dd2-> d_name);
-                        }
-                    }
-                    count++;
-                    }
-                    /*Conta anche direttorio stesso e padre
-                    printf("Numero totale di file %d\n", count);
-                    
-                    
-					}
-					printf("Terminato invio file\n");
-					/* non è più necessario inviare al client un segnale di terminazione 
-					closedir(dir);
-				}*/
+				
 
 				/*la connessione assegnata al figlio viene chiusa*/
 				printf("Figlio %i: termino\n", getpid());
+				shutdown(connfd,0);
+				shutdown(connfd,1);
+				close(connfd);
 				exit(0);
 			}//figlio-fork
 			/* padre chiude la socket dell'operazione */
-			shutdown(connfd,0);
+			/*shutdown(connfd,0);
 			shutdown(connfd,1);
-			close(connfd);
-            }
+			close(connfd);*/
 		 /* fine gestione richieste di file */
+                
+        }
 
 		/* GESTIONE RICHIESTE DI ELIMINAZIONE PAROLA ------------------------------------------ */
 		if (FD_ISSET(udpfd, &rset)){
@@ -284,42 +257,68 @@ int main(int argc, char **argv){
 			{perror("recvfrom"); continue;}
 			
 			printf("Nome file:%s\n", req->nome_file);
+			
 
 			printf("Richiesta eliminazione occorrenze di %s nel file %s\n",  req->parola,req->nome_file);
             
             /* ALGORITMO ELIMINA OCCORRENZE */
-            int fd;
-            int res = 0;
-            char word[DIM_BUFF];
-            char punt[] = ".;,:!?";
-            char temp[DIM_BUFF];
-            int n;
+            int fi, fout;
+            char temp[] = "outfile.txt";
             
-            if ((fp = fopen(req->nome_file, "r+")) == NULL) {
-                printf("Errore nell'apertura del file");
-                num = -1;
-                }
-            
-            
-            while ((n=fscanf(fp, "%s", &word)) != EOF) {
-                // TODO: scanf eliminando la punteggiatura [. , : ;]
-                
-                 printf("%s\n", temp);
-                 //printf("%s\n", word);
-                 if (strcmp(temp, req->parola) == 0) {
-               // if (strcmp(word, req->parola) == 0) {
-                    num++;
-                } else {
-                // TODO: eliminazione parole che corrispondono a quella inserita
-                 //fwrite(word, strlen(word), 1, fp);
-                }
-            }
-                fclose(fp);
+			char buff[strlen(req->nome_file)+1];
+			fi = open(req->nome_file, O_RDONLY);
+			fout = open(temp, O_WRONLY|O_CREAT|O_TRUNC, 0600);
+
+			if (fi < 0){
+				printf("Errore lettura file orig, %s\n", req->nome_file);
+				close(fi);
+			}
+			if (fout < 0){
+				printf("Errore apertura file temp, %s\n", temp);
+				close(fi);
+				close(fout);
+			}
+			char c;
+			int j = 0, occ = 0;
+			char currentWord[STRING_LENGTH];
+
+			/*	Filtro a carattere	*/
+			while(read(fi, &c, 1) > 0){
+				if(c != ' ' && c != '\n'){
+					currentWord[j]=c;
+					j++;
+           		}else{
+					/*	Ho trovato una parola	*/
+                	if(strcmp(currentWord, req->parola)==0){
+						/*	La parola e' quella da eliminare (non la salvo nel nuovo file), conto le occorrenze	*/ 
+						occ++;
+						printf("Occorrenze %s: %d\n",currentWord, occ);
+						/*	Inizializzo nuovamente la stringa	*/
+						memset(currentWord,0,sizeof(currentWord));
+						j=0;
+					}else{
+						/*	La parola non e' quella da eliminare, la scrivo dentro il nuovo file*/
+						write(fout, &currentWord, strlen(currentWord));
+						/*	Scrivo anche il separatore	*/
+						write(fout, &c, 1);
+						/*	Inizializzo nuovamente la stringa	*/
+						memset(currentWord,0,sizeof(currentWord));
+						j=0;
+					}	
+				}
+			}
+			/*	Dopo la chiusura dei file il file originale va unlinkato e il nuovo file deve essere rinominato come il file originale
+				cosi' da prendere il suo posto nel file system */
+			close(fi);
+			unlink(req->nome_file);
+			rename(temp, req->nome_file);
+			close(fout);
+
         
     
 			
             
-			printf("Risultato del conteggio: %i\n", num);
+			printf("Risultato del conteggio: %i\n", occ);
 
 			/*
 			* Cosa accade se non commentiamo le righe di codice qui sotto?
@@ -334,12 +333,14 @@ int main(int argc, char **argv){
 			sleep(30);
 			printf("Fine sleep\n");*/
             
-			ris=htonl(num);
+			ris=htonl(occ);
 			if (sendto(udpfd, &ris, sizeof(ris), 0, (struct sockaddr *)&cliaddr, len)<0)
 			{perror("sendto"); continue;}
 		} /* fine gestione richieste di conteggio */
 
-	} /* ciclo for della select */
+    }/* ciclo for della select */
 	/* NEVER ARRIVES HERE */
-	exit(0);
+	
+exit(0);
 }
+
