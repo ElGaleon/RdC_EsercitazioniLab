@@ -20,9 +20,8 @@
 #define STRING_LENGTH 256
 #define LENGTH_FILE_NAME 20
 #define max(a,b) ((a) > (b) ? (a) : (b))
-/*	La Request deve essere omogenea a quella del Client*/
+
 typedef struct{
-    //char nome_dir[LENGTH_FILE_NAME];
 	char nome_file[LENGTH_FILE_NAME];
     char parola[STRING_LENGTH];
 }Request;
