@@ -58,7 +58,8 @@ int main(int argc, char **argv){
 	char buff[DIM_BUFF], nome_file[LENGTH_FILE_NAME], nome_dir[LENGTH_FILE_NAME],nome_dir_livello_2[LENGTH_FILE_NAME];
     char *fn, *word;
 	fd_set rset;
-	int len, nread, nwrite, num = 0, ris, port;
+	int len, nread, nwrite, num = 0, ris = -1, port;
+	ris=htonl(ris);
 	struct sockaddr_in cliaddr, servaddr;
     Request* req =(Request*)malloc(sizeof(Request));
     
@@ -243,10 +244,7 @@ int main(int argc, char **argv){
 			len=sizeof(struct sockaddr_in);
             if (recvfrom(udpfd, req, sizeof(Request), 0, (struct sockaddr *)&cliaddr, &len)<0)
 			{perror("recvfrom"); continue;}
-			
-			
-			
-
+		
 			printf("Richiesta eliminazione occorrenze di %s nel file %s\n",  req->parola,req->nome_file);
             
             /* ALGORITMO ELIMINA OCCORRENZE */
@@ -309,12 +307,13 @@ int main(int argc, char **argv){
 			unlink(req->nome_file);
 			rename(temp, req->nome_file);
 			close(fout);
-
-        
-    
-			
             
 			printf("Risultato del conteggio: %i\n", occ);
+			if(occ>0){
+				ris=htonl(occ);
+			}
+			if (sendto(udpfd, &ris, sizeof(ris), 0, (struct sockaddr *)&cliaddr, len)<0)
+			{perror("sendto"); continue;}
 
 			/*
 			* Cosa accade se non commentiamo le righe di codice qui sotto?
@@ -329,9 +328,6 @@ int main(int argc, char **argv){
 			sleep(30);
 			printf("Fine sleep\n");*/
             
-			ris=htonl(occ);
-			if (sendto(udpfd, &ris, sizeof(ris), 0, (struct sockaddr *)&cliaddr, len)<0)
-			{perror("sendto"); continue;}
 		} /* fine gestione richieste di conteggio */
 
     }/* ciclo for della select */
