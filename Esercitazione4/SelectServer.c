@@ -272,13 +272,13 @@ int main(int argc, char **argv){
 			/*	Filtro a carattere	*/
 			while(read(fi, &c, 1) > 0){
 				found = 0;
-				for(int i = 0; i < strlen(separatori); i++){
+				for(int i = 0; i < strlen(separatori) + 1; i++){
 					if(c == separatori[i]){
 						found = 1;
 						break;
 					}
 				}
-				if(found){
+				if(!found){
 					currentWord[j]=c;
 					j++;
            		}else{
