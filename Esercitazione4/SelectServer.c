@@ -270,10 +270,19 @@ int main(int argc, char **argv){
 			char c;
 			int j = 0, occ = 0;
 			char currentWord[STRING_LENGTH];
-
+			char separatori[] = {' ', '.', ',', ';', ':', '!', '?', '\n', '\t'};
+			int found;
+			
 			/*	Filtro a carattere	*/
 			while(read(fi, &c, 1) > 0){
-				if(c != ' ' && c != '\n'){
+				found = 0;
+				for(int i = 0; i < strlen(separatori); i++){
+					if(c == separatori[i]){
+						found = 1;
+						break;
+					}
+				}
+				if(found){
 					currentWord[j]=c;
 					j++;
            		}else{
