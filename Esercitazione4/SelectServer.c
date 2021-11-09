@@ -244,7 +244,7 @@ int main(int argc, char **argv){
             if (recvfrom(udpfd, req, sizeof(Request), 0, (struct sockaddr *)&cliaddr, &len)<0)
 			{perror("recvfrom"); continue;}
 			
-			printf("Nome file:%s\n", req->nome_file);
+			
 			
 
 			printf("Richiesta eliminazione occorrenze di %s nel file %s\n",  req->parola,req->nome_file);
@@ -253,7 +253,6 @@ int main(int argc, char **argv){
             int fi, fout;
             char temp[] = "outfile.txt";
             
-			char buff[strlen(req->nome_file)+1];
 			fi = open(req->nome_file, O_RDONLY);
 			fout = open(temp, O_WRONLY|O_CREAT|O_TRUNC, 0600);
 
