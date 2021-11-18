@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 
-class ClientCongresso {
+class Client{
 
   // Avvio del Client RMI
 	public static void main(String[] args) {
@@ -53,7 +53,7 @@ class ClientCongresso {
 			String service;
 			String fileName;
 			int occ, numLinea;
-			System.out.print("Servizio (R=Registrazione, P=Programma del congresso): ");
+			System.out.print("Servizio (C=Conta righe, E=Elimina Righe): ");
 			
 			while ((service = stdIn.readLine()) != null) {
 				

@@ -8,8 +8,8 @@ import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ServerImpl extends UnicastRemoteObject implements
-        Server {
+public class ServerCongressoImpl extends UnicastRemoteObject implements
+    ServerCongresso {
   static Programma prog[];
 
   // Costruttore
@@ -19,54 +19,27 @@ public class ServerImpl extends UnicastRemoteObject implements
 
   /* Conta righe che abbiano numero parole maggiore di $min */
   public int conta_righe(String nomeFile, int min) throws RemoteException {
-    int res = 0, int occ = 0;
-    File f;
-    System.out.println("Server RMI: richiesto conteggio righe");
+      int res = 0, int occ = 0;
+      File f;
+      System.out.println("Server RMI: richiesto conteggio righe");
 
-    f = new File(nomeFile);   // Creazione file
-    if (f.isDirectory()) {
-      throw new RemoteException();
-    }
+      f = new File(nomeFile);   // Creazione file
     // Creating an object of BufferedReader class
     BufferedReader br = new BufferedReader(new FileReader(f));
     String st;
 
     while ((st = br.readLine()) != null)
-      if (st.split(' ').length > min)
-        res++;
+        if (st.split(' ').length > min)
+          res++;
   }
       return res;
-}
+  }
 
   /* Elimina righe */
-  public int elimina_righe(String nomeFile, int numLinea) throws RemoteException {
-    int res = 0, riga = 1;
+  public int conta_righe(String nomeFile, int numLinea) throws RemoteException {
+    int res = 0;
     System.out.println("Server RMI: richiesta elimina righe");
-
-    f = new File(nomeFile);   // Creazione file
-    fOut = new File(nomeFile+"_elimaRighe.txt");
-
-    if (f.isDirectory()) {
-      throw new RemoteException();
-    }
-
-    // Creating an object of BufferedReader class
-    BufferedReader br = new BufferedReader(new FileReader(f));
-    String st;
-    boolean eliminata = false;
-
-    while ((st = br.readLine()) != null) {
-      if (riga != numLinea) {
-        fOut.write(st);
-      } else {
-          eliminata = true;
-        }
-      riga++;
-    }
-    if (eliminata == false) { // Restituisco eccezione se il numero di linea inserito è maggiore delle righe del file
-        throw new RemoteException();
-    }
-    return res;
+    return result;
   }
 
 
@@ -84,7 +57,7 @@ public class ServerImpl extends UnicastRemoteObject implements
     // Controllo dei parametri della riga di comando
     if (args.length != 1 && args.length != 2) {
       System.out
-              .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero");
+          .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero");
       System.exit(1);
     }
     String registryRemotoHost = args[0];
@@ -93,7 +66,7 @@ public class ServerImpl extends UnicastRemoteObject implements
         registryRemotoPort = Integer.parseInt(args[1]);
       } catch (Exception e) {
         System.out
-                .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero");
+            .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero");
         System.exit(2);
       }
     }
@@ -105,18 +78,18 @@ public class ServerImpl extends UnicastRemoteObject implements
 
     // Registrazione del servizio RMI
     String completeRemoteRegistryName = "//" + registryRemotoHost + ":"
-            + registryRemotoPort + "/" + registryRemotoName;
+        + registryRemotoPort + "/" + registryRemotoName;
 
     try {
       RegistryRemotoServer registryRemoto = (RegistryRemotoServer) Naming
-              .lookup(completeRemoteRegistryName);
+          .lookup(completeRemoteRegistryName);
       ServerCongressoImpl serverRMI = new ServerCongressoImpl();
       registryRemoto.aggiungi(serviceName, serverRMI);
       System.out.println("Server RMI: Servizio \"" + serviceName
-              + "\" registrato");
+          + "\" registrato");
     } catch (Exception e) {
       System.err.println("Server RMI \"" + serviceName + "\": "
-              + e.getMessage());
+          + e.getMessage());
       e.printStackTrace();
       System.exit(1);
     }
