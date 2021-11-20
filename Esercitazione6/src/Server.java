@@ -16,7 +16,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
 
     /* Conta righe che abbiano numero parole maggiore di $min */
     public int conta_righe(String nomeFile, int min) throws RemoteException {
-        int res = 0, occ = 0;
+        int res = 0;
         File f;
         System.out.println("Server RMI: richiesto conteggio righe");
 
@@ -38,7 +38,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
             br.close();
         } catch (Exception e) {
             System.out.println("Lancio eccezione a Client");
-           throw new RemoteException("Il file indicato non può essere aperto");
+            throw new RemoteException("Il file indicato non può essere aperto");
         }
 
         return res;
@@ -47,12 +47,21 @@ public class Server extends UnicastRemoteObject implements RemOp {
 
     /* Elimina righe */
     public int elimina_righe(String nomeFile, int numLinea) throws RemoteException {
-        int res = 0, riga = 1;
+        int riga = 1;
         File f, fOut;
         System.out.println("Server RMI: richiesta elimina righe");
 
-        f = new File(nomeFile);   // Creazione file
-        fOut = new File(nomeFile+"_eliminaRighe.txt");
+        f = new File(nomeFile);   // Apertura file
+        if(!f.exists()){
+            System.out.println("Il file non esiste");
+            throw new RemoteException("Il file non esiste\n");
+        }
+        if (f.isDirectory()) {
+            System.out.println("Il file e' un direttorio");
+            throw new RemoteException("Il file e' un direttorio\n");
+        }
+        
+        fOut = new File(nomeFile+"_eliminaRighe.txt");  //Creazione file
         try {
             if (fOut.createNewFile()){
                 System.out.println("File " + fOut + " is created!");
@@ -60,21 +69,20 @@ public class Server extends UnicastRemoteObject implements RemOp {
                 System.out.println("File " + fOut + " already exists.");
             }
         } catch (IOException i)  {
-            
-        }
-        if (f.isDirectory()) {
-            throw new RemoteException();
+            System.out.println("Impossibile creare file output");
+            throw new RemoteException("Impossibile creare file output\n");
         }
 
         try {// Creating an object of BufferedReader class
-            BufferedReader br = new BufferedReader(new FileReader(f));
+            //BufferedReader br = new BufferedReader(new FileReader(f));
+            BufferedReader br = new BufferedReader(new FileReader(nomeFile));
             BufferedWriter brOut = new BufferedWriter(new FileWriter(fOut));
             String st;
             boolean eliminata = false;
 
             while ((st = br.readLine()) != null) {
                 if (riga != numLinea) { // riga diversa da quella che si vuole eliminare
-                    brOut.write(st);    // scrivo riga nel file modificato
+                    brOut.write(st+"\n");    // scrivo riga nel file modificato
                 } else {
                     eliminata = true;
                 }
@@ -83,11 +91,13 @@ public class Server extends UnicastRemoteObject implements RemOp {
             br.close();
             brOut.close();
             if (eliminata == false) { // Restituisco eccezione se il numero di linea inserito è maggiore delle righe del file
-                throw new RemoteException();
+                System.out.println("Nessuna riga eliminata");
+                throw new RemoteException("Nessuna riga eliminata\n");
             }
 
         }catch (Exception e) {
-               throw new RemoteException();
+            System.out.println("Eccezione:\n" + e.getMessage());
+            throw new RemoteException();
         }
 
         return riga-2;

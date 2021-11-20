@@ -54,7 +54,8 @@ public class Client {
                         res = serverRMI.conta_righe(fileName, occ);
 
                     } catch (RemoteException e) {
-                        e.getMessage();
+                        System.err.print(e.getMessage());
+                        System.out.print("Servizio (C=Conta Righe, E=Elimina Riga): ");
                         continue;
                     }
                     System.out.println("Numero righe con numero parole maggiore del min indicato: " + res);
@@ -71,8 +72,9 @@ public class Client {
                     try {
                         res = serverRMI.elimina_righe(fileName, numLinea);
 
-                    } catch (Exception e) {
-                        e.getMessage();
+                    } catch (RemoteException e) {
+                        System.err.print(e.getMessage());
+                        System.out.print("Servizio (C=Conta Righe, E=Elimina Riga): ");
                         continue;
                     }
                     System.out.println("Numero righe del nuovo file: " + res);
