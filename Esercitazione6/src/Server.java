@@ -53,7 +53,15 @@ public class Server extends UnicastRemoteObject implements RemOp {
 
         f = new File(nomeFile);   // Creazione file
         fOut = new File(nomeFile+"_eliminaRighe.txt");
-
+        try {
+            if (fOut.createNewFile()){
+                System.out.println("File " + fOut + " is created!");
+            } else {
+                System.out.println("File " + fOut + " already exists.");
+            }
+        } catch (IOException i)  {
+            
+        }
         if (f.isDirectory()) {
             throw new RemoteException();
         }
