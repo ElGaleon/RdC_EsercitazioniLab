@@ -1,97 +1,83 @@
 /**
- * ServerImpl.java
+ * ServerCongressoImpl.java
  * 		Implementazione del server
  * */
 
+
 import java.rmi.Naming;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 public class ServerCongressoImpl extends UnicastRemoteObject implements
-    ServerCongresso {
-  static Programma prog[];
+		ServerCongresso {
+	static Programma prog[];
 
-  // Costruttore
-  public ServerCongressoImpl() throws RemoteException {
-    super();
-  }
+	// Costruttore
+	public ServerCongressoImpl() throws RemoteException {
+		super();
+	}
 
-  /* Conta righe che abbiano numero parole maggiore di $min */
-  public int conta_righe(String nomeFile, int min) throws RemoteException {
-      int res = 0, int occ = 0;
-      File f;
-      System.out.println("Server RMI: richiesto conteggio righe");
+	// 	Richiede una prenotazione
+	public int registrazione(int giorno, String sessione, String speaker)
+			throws RemoteException {
+		int numSess = -1;
+		System.out.println("Server RMI: richiesta registrazione con parametri");
+		System.out.println("giorno   = " + giorno);
+		System.out.println("sessione = " + sessione);
+		System.out.println("speaker  = " + speaker);
 
-      f = new File(nomeFile);   // Creazione file
-    // Creating an object of BufferedReader class
-    BufferedReader br = new BufferedReader(new FileReader(f));
-    String st;
+		if(sessione.equals("S1")) numSess = 0;
+	    else if(sessione.equals("S2")) numSess = 1;
+	    else if(sessione.equals("S3")) numSess = 2;
+	    else if(sessione.equals("S4")) numSess = 3;
+	    else if(sessione.equals("S5")) numSess = 4;
+	    else if(sessione.equals("S6")) numSess = 5;
+	    else if(sessione.equals("S7")) numSess = 6;
+	    else if(sessione.equals("S8")) numSess = 7;
+	    else if(sessione.equals("S9")) numSess = 8;
+	    else if(sessione.equals("S10")) numSess = 9;
+	    else if(sessione.equals("S11")) numSess = 10;
+	    else if(sessione.equals("S12")) numSess = 11;
 
-    while ((st = br.readLine()) != null)
-        if (st.split(' ').length > min)
-          res++;
-  }
-      return res;
-  }
+	    // Se i dati sono sbagliati significa che sono stati trasmessi male e quindi
+	    // solleva una eccezione
+	    if(numSess == -1) throw new RemoteException();
+	    if(giorno < 1 || giorno > 3) throw new RemoteException();
 
-  /* Elimina righe */
-  public int conta_righe(String nomeFile, int numLinea) throws RemoteException {
-    int res = 0;
-    System.out.println("Server RMI: richiesta elimina righe");
-    return result;
-  }
+	    return prog[giorno - 1].registra(numSess, speaker);
+	}
 
+	// Ritorno il campo
+	public Programma programma(int giorno) throws RemoteException {
+		System.out.println("Server RMI: richiesto programma del giorno " + giorno);
+		return prog[giorno - 1];
+	}
 
-  // Avvio del Server RMI
-  public static void main(String[] args) {
+	// Avvio del Server RMI
+	public static void main(String[] args) {
 
-    // creazione programma
-    prog = new Programma[3];
-    for (int i = 0; i < 3; i++)
-      prog[i] = new Programma();
-    int registryRemotoPort = 1099;
-    String registryRemotoName = "RegistryRemoto";
-    String serviceName = "ServerCongresso";
+		//creazione programmi per le tre giornate di congresso.s
+		prog = new Programma[3];
+		for(int i = 0; i < 3; i++)
+			prog[i] = new Programma();
+		final int REGISTRYPORT = 1099;
+		String registryHost = "localhost";
+		String serviceName = "ServerCongresso";		//lookup name...
 
-    // Controllo dei parametri della riga di comando
-    if (args.length != 1 && args.length != 2) {
-      System.out
-          .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero");
-      System.exit(1);
-    }
-    String registryRemotoHost = args[0];
-    if (args.length == 2) {
-      try {
-        registryRemotoPort = Integer.parseInt(args[1]);
-      } catch (Exception e) {
-        System.out
-            .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero");
-        System.exit(2);
-      }
-    }
-
-    // Impostazione del SecurityManager
-    if (System.getSecurityManager() == null) {
-      System.setSecurityManager(new RMISecurityManager());
-    }
-
-    // Registrazione del servizio RMI
-    String completeRemoteRegistryName = "//" + registryRemotoHost + ":"
-        + registryRemotoPort + "/" + registryRemotoName;
-
-    try {
-      RegistryRemotoServer registryRemoto = (RegistryRemotoServer) Naming
-          .lookup(completeRemoteRegistryName);
-      ServerCongressoImpl serverRMI = new ServerCongressoImpl();
-      registryRemoto.aggiungi(serviceName, serverRMI);
-      System.out.println("Server RMI: Servizio \"" + serviceName
-          + "\" registrato");
-    } catch (Exception e) {
-      System.err.println("Server RMI \"" + serviceName + "\": "
-          + e.getMessage());
-      e.printStackTrace();
-      System.exit(1);
-    }
-  }
+		// Registrazione del servizio RMI
+		String completeName = "//" + registryHost + ":" + REGISTRYPORT + "/"
+				+ serviceName;
+		try{
+			ServerCongressoImpl serverRMI = new ServerCongressoImpl();
+			Naming.rebind(completeName, serverRMI);
+			System.out.println("Server RMI: Servizio \"" + serviceName
+					+ "\" registrato");
+		}
+		catch(Exception e){
+			System.err.println("Server RMI \"" + serviceName + "\": "
+					+ e.getMessage());
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 }
