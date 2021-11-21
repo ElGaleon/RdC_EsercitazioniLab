@@ -1,3 +1,17 @@
+package reties6;
+
+import java.io.*;
+
+/**
+ * ServerImpl.java
+ * 		Implementazione del server
+ * */
+
+import java.rmi.Naming;
+import java.rmi.RMISecurityManager;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
 import java.io.*;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
@@ -6,7 +20,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 // TODO: sistemare lancio delle eccezioni - non funzionante
 // TODO: sistemare algoritmo elimina_righe: non sempre scrive nel nuovo file
-// TODO: cercare di implementare l'algoritmo con la lettura carattere per carattere perchÃ© piÃ¹ veloce e, se possibile, fare temporizzazioni a confronto
+// TODO: cercare di implementare l'algoritmo con la lettura carattere per carattere perché più veloce e, se possibile, fare temporizzazioni a confronto
+//aggiornamento: lettura a carattere non testata (implementata e commentata sotto)
 public class Server extends UnicastRemoteObject implements RemOp {
 
     // Costruttore
@@ -22,7 +37,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
 
         f = new File(nomeFile);   // Creazione file
         if (f.isDirectory()) {
-            throw new RemoteException("Il file Ã¨ una directory");
+            throw new RemoteException("Il file è una directory");
         }
         // Creating an object of BufferedReader class
         try {
@@ -38,7 +53,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
             br.close();
         } catch (Exception e) {
             System.out.println("Lancio eccezione a Client");
-            throw new RemoteException("Il file indicato non puÃ² essere aperto");
+            throw new RemoteException("Il file indicato non può essere aperto");
         }
 
         return res;
@@ -78,6 +93,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
             BufferedReader br = new BufferedReader(new FileReader(nomeFile));
             BufferedWriter brOut = new BufferedWriter(new FileWriter(fOut));
             String st;
+            char c;
             boolean eliminata = false;
 
             while ((st = br.readLine()) != null) {
@@ -88,9 +104,18 @@ public class Server extends UnicastRemoteObject implements RemOp {
                 }
                 riga++;
             }
+            /*while ((c = (char)br.read()) != -1) {
+                if (riga != numLinea) { // riga diversa da quella che si vuole eliminare
+                    brOut.write(c+"\n");    // scrivo char riga nel file modificato
+                } else {
+                    eliminata = true;
+                }
+                if(c=='\n')riga++; //se incontro fine riga, incremento la variabile
+            }*/
+            
             br.close();
             brOut.close();
-            if (eliminata == false) { // Restituisco eccezione se il numero di linea inserito Ã¨ maggiore delle righe del file
+            if (eliminata == false) { // Restituisco eccezione se il numero di linea inserito è maggiore delle righe del file
                 System.out.println("Nessuna riga eliminata");
                 throw new RemoteException("Nessuna riga eliminata\n");
             }
@@ -114,7 +139,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
         String completeName = "//" + registryHost + ":" + REGISTRYPORT + "/"
                 + serviceName;
         try{
-            Server serverRMI = new Server();
+        	Server serverRMI = new Server();
             Naming.rebind(completeName, serverRMI);
             System.out.println("Server RMI: Servizio \"" + serviceName
                     + "\" registrato");
