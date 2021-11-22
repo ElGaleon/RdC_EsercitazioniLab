@@ -101,7 +101,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
                 br.close();
                 brOut.close();
                 fOut.delete();
-                throw new RemoteException("Numero di linea eccessivo");
+                throw new RemoteException("Numero di linea eccessivo\n");
             }
            /* while ((i=br.read()) != -1) {
             	c = (char)i;
@@ -121,7 +121,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
 
         }catch (Exception e) {
             System.out.println("Eccezione:\n" + e.getMessage());
-            throw new RemoteException();
+            throw new RemoteException(e.getMessage());
         }
 
         return riga-2;
