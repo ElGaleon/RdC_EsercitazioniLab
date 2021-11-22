@@ -33,7 +33,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
 
         f = new File(nomeFile);   // Creazione file
         if (f.isDirectory()) {
-            throw new RemoteException("Il file � una directory");
+            throw new RemoteException("Il file ? una directory");
         }
         // Creating an object of BufferedReader class
         try {
@@ -49,7 +49,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
             br.close();
         } catch (Exception e) {
             System.out.println("Lancio eccezione a Client");
-            throw new RemoteException("Il file indicato non pu� essere aperto");
+            throw new RemoteException("Il file indicato non pu? essere aperto");
         }
 
         return res;
@@ -106,7 +106,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
            /* while ((i=br.read()) != -1) {
             	c = (char)i;
                 if (riga != numLinea) { // riga diversa da quella che si vuole eliminare
-                    brOut.write(c+"\n");    // scrivo char riga nel file modificato
+                    brOut.write(c);    // scrivo char riga nel file modificato
                 } else {
                     eliminata = true;
                 }
