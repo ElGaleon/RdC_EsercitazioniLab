@@ -94,6 +94,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
             BufferedWriter brOut = new BufferedWriter(new FileWriter(fOut));
             String st;
             char c;
+            int i;
             boolean eliminata = false;
 
             while ((st = br.readLine()) != null) {
@@ -104,7 +105,8 @@ public class Server extends UnicastRemoteObject implements RemOp {
                 }
                 riga++;
             }
-            /*while ((c = (char)br.read()) != -1) {
+           /* while ((i=br.read()) != -1) {
+            	c = (char)i;
                 if (riga != numLinea) { // riga diversa da quella che si vuole eliminare
                     brOut.write(c+"\n");    // scrivo char riga nel file modificato
                 } else {
