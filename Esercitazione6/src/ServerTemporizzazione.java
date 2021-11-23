@@ -18,10 +18,10 @@ import java.rmi.server.UnicastRemoteObject;
 
 // TODO: cercare di implementare l'algoritmo con la lettura carattere per carattere perch pi veloce e, se possibile, fare temporizzazioni a confronto
 //aggiornamento: lettura a carattere non testata (implementata e commentata sotto)
-public class Server extends UnicastRemoteObject implements RemOp {
+public class ServerTemporizzazione extends UnicastRemoteObject implements RemOp {
 
     // Costruttore
-    public Server() throws RemoteException {
+    public ServerTemporizzazione() throws RemoteException {
         super();
     }
 
@@ -48,17 +48,19 @@ public class Server extends UnicastRemoteObject implements RemOp {
                     res++;
                 }
             }
+
 //lettura char incompleta
-           /* StringBuilder stb = new StringBuilder();
-                 while ((i=br.read()) != -1) {
+            StringBuilder stb = new StringBuilder();
+            while ((i=br.read()) != -1) {
             	c = (char)i;
             	stb.append(c);
-            	 if(c=='\n'){
-            		 st=stb.toString();
+            	if(c=='\n'){
+            		st=stb.toString();
+                    stb.setLength(0);  //  Reset StringBuilder 
             	if(st.split(" ").length > min) // le parole della riga sono maggiori del min inserito dall'utente
                    res++;
                 }
-                }*/
+            }
             
             /*int contap=0;
 	    char prevC='0';
@@ -87,7 +89,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
 
 
     /* Elimina righe */
-    public int elimina_righe(String nomeFile, int numLinea) throws RemoteException {
+    public synchronized int elimina_righe(String nomeFile, int numLinea) throws RemoteException {
         int riga = 1;
         File f, fOut;
         System.out.println("Server RMI: richiesta elimina righe");
@@ -171,7 +173,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
         String completeName = "//" + registryHost + ":" + REGISTRYPORT + "/"
                 + serviceName;
         try{
-        	Server serverRMI = new Server();
+        	ServerTemporizzazione serverRMI = new ServerTemporizzazione();
             Naming.rebind(completeName, serverRMI);
             System.out.println("Server RMI: Servizio \"" + serviceName
                     + "\" registrato");
