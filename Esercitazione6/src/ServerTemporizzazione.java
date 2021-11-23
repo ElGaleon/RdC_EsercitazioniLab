@@ -43,39 +43,28 @@ public class ServerTemporizzazione extends UnicastRemoteObject implements RemOp 
             long start, end;
             char c;
             start=System.currentTimeMillis();
-            while (  (st= br.readLine()) != null) {
-                if (st.split(" ").length > min) { // le parole della riga sono maggiori del min inserito dall'utente
-                    res++;
-                }
-            }
-
-//lettura char incompleta
-            StringBuilder stb = new StringBuilder();
-            while ((i=br.read()) != -1) {
-            	c = (char)i;
-            	stb.append(c);
-            	if(c=='\n'){
-            		st=stb.toString();
-                    stb.setLength(0);  //  Reset StringBuilder 
-            	if(st.split(" ").length > min) // le parole della riga sono maggiori del min inserito dall'utente
-                   res++;
-                }
-            }
             
-            /*int contap=0;
-	    char prevC='0';
-             while ((i=br.read()) != -1) {
-        	c = (char)i;
-		if((c>='a' && c<='z') || (c>='A' && c<='Z') && contap==0)contap++; //controllo prima parola (nel caso in cui non ci siano spazi)
-        	if(c==' ' && (prevC != ' ' && prevC!='0')) contap++;
-        	 if(c=='\n'){
-            if (contap > min) { // le parole della riga sono maggiori del min inserito dall'utente
-               res++;
-            }
-            contap=0;
-            }
-           
-        }*/
+                while (  (st= br.readLine()) != null) {
+                    if (st.split(" ").length > min) { // le parole della riga sono maggiori del min inserito dall'utente
+                        res++;
+                    }
+                }
+            
+
+            /**
+                StringBuilder stb = new StringBuilder();
+                while ((i=br.read()) != -1) {
+                	c = (char)i;
+                	stb.append(c);
+                	if(c=='\n'){
+                		st=stb.toString();
+                        stb.setLength(0);  //  Reset StringBuilder 
+                	if(st.split(" ").length > min) // le parole della riga sono maggiori del min inserito dall'utente
+                       res++;
+                    }
+                }
+            */
+            
             end=System.currentTimeMillis();
             br.close();
             System.out.println("Tempo ContaRighe"+ Long.toString(end-start) + " millisecondi");
