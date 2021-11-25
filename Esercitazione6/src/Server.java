@@ -58,7 +58,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
 
 
     /* Elimina righe */
-    public int elimina_righe(String nomeFile, int numLinea) throws RemoteException {
+    public synchronized int elimina_righe(String nomeFile, int numLinea) throws RemoteException {
         int riga = 1;
         File f, fOut;
         long start, end;
