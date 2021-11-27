@@ -29,6 +29,7 @@ public class Server extends UnicastRemoteObject implements RemOp {
     public int conta_righe(String nomeFile, int min) throws RemoteException {
         int res = 0;
         File f;
+        long start, end;
         System.out.println("Server RMI: richiesto conteggio righe");
 
         f = new File(nomeFile);   // Creazione file
@@ -60,8 +61,10 @@ public class Server extends UnicastRemoteObject implements RemOp {
     public synchronized int elimina_righe(String nomeFile, int numLinea) throws RemoteException {
         int riga = 1;
         File f, fOut;
+        long start, end;
         System.out.println("Server RMI: richiesta elimina righe");
 
+        start=System.currentTimeMillis();
         f = new File(nomeFile);   // Apertura file
         if(!f.exists()){
             throw new RemoteException("Il file non esiste\n");
@@ -127,7 +130,8 @@ public class Server extends UnicastRemoteObject implements RemOp {
             System.out.println("Eccezione:\n" + e.getMessage());
             throw new RemoteException(e.getMessage());
         }
-
+        end=System.currentTimeMillis();
+        System.out.println("Tempo di esecuzione elimina righe: " + Long.toString(end-start) +  " ms");
         return riga-2;
     }
 
