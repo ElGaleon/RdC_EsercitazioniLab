@@ -12,6 +12,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class RegistryRemotoTagImpl extends UnicastRemoteObject implements
 	RegistryRemotoTagServer {
 
+	private String[] tags={"Congresso","Tag1","Tag2"};
 	// num. entry [nomelogico][ref]
 	final int tableSize = 100;
 
@@ -121,8 +122,8 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements
 	@Override
 	public synchronized boolean associaTag(String tag, String nomeLogico) throws RemoteException {
 		boolean risultato = false;
-		if (nomeLogico == null || tag == null)
-			return risultato;
+		if (nomeLogico == null || tag == null || !tagIsValid(tag))
+			throw new RemoteException;
 		for (int i = 0; i < tableSize; i++)
 			if ( nomeLogico.equals((String) table[i][0]) ) {
 				if (table[i][2] == null) {
@@ -137,20 +138,28 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements
 
 	/* Codice  copiato da cercaTutti*/
 	@Override
-	public Remote[] cercaTag(String tag) throws RemoteException {
+	public String[] cercaTag(String tag) throws RemoteException {
 		int cont = 0;
-		if( tag == null ) return new Remote[0];
+		if( tag == null || !tagIsValid(tag)) return new Remote[0];
 		for (int i = 0; i < tableSize; i++)
-			if ( tag.equals((String) table[i][2]) )
+			if ( this.table[i][0]!=null && this.table[i][2]!=null && tag.equals((String) table[i][2]) )
 				cont++;
-		Remote[] risultato = new Remote[cont];
+		String[] risultato = new String[cont];
 		// Ora lo uso come indice per il riempimento
 		cont = 0;
 		for (int i = 0; i < tableSize; i++)
 			if ( tag.equals((String) table[i][2]) )
-				risultato[cont++] = (Remote) table[i][2];
+				risultato[cont++] = (String) table[i][2];
 		return risultato;
 	}
+
+	private boolean tagIsValid(String tag){
+		for(String t in tags){
+			if(t.equals(tag)) return true;
+		}
+		return false;
+	}
+
 
 	// Avvio del Server RMI
 	public static void main(String[] args) {

@@ -9,13 +9,14 @@ import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 
 class ClientCongresso {
-
+	private String Tag="Congresso";
   // Avvio del Client RMI
 	public static void main(String[] args) {
 		int registryRemotoPort = 1099;
 		String registryRemotoHost = null;
 		String registryRemotoName = "RegistryRemoto";
 		String serviceName = "ServerCongresso";
+		String services;
 		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
 		// Controllo dei parametri della riga di comando
@@ -42,8 +43,11 @@ class ClientCongresso {
 		try {
 			String completeRemoteRegistryName = "//" + registryRemotoHost + ":"
 					+ registryRemotoPort + "/" + registryRemotoName;
-			RegistryRemotoClient registryRemoto = 
-					(RegistryRemotoClient) Naming.lookup(completeRemoteRegistryName);
+			RegistryRemotoTagClient registryRemoto =
+					(RegistryRemotoTagClient) Naming.lookup(completeRemoteRegistryName);
+			services=registryRemoto.cercaTag(Tag);
+			if(services==null||services[0]==null||services.length==0) System.exit(1);
+			serviceName=services[0];
 			ServerCongresso serverRMI = 
 					(ServerCongresso) registryRemoto.cerca(serviceName);
 			System.out.println("ClientRMI: Servizio \"" + serviceName + "\" connesso");
