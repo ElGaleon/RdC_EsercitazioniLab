@@ -1,3 +1,4 @@
+
 /**
  * ServerCongressoImpl.java
  * 		Implementazione del server
@@ -49,7 +50,7 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
     return prog[giorno - 1];
   }
 
-  // Avvio del Server RMI
+  /*// Avvio del Server RMI
   public static void main(String[] args) {
 
     // creazione programma
@@ -57,7 +58,7 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
     for (int i = 0; i < 3; i++)
       prog[i] = new Programma();
     int registryRemotoPort = 1099;
-    String registryRemotoName = "RegistryRemoto";
+    String registryRemotoName = "RegistryRemotoTag";
     String serviceName = "ServerCongresso";
 
     // Controllo dei parametri della riga di comando
@@ -98,6 +99,29 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
           + e.getMessage());
       e.printStackTrace();
       System.exit(1);
+    }*/
+      // Avvio del Server RMI
+    public static void main(String[] args) {
+        final int REGISTRYPORT = 1099;
+        String registryHost = "localhost";
+        String serviceName = "RegistryRemotoTagServer";		//lookup name...
+
+        // Registrazione del servizio RMI
+        String completeName = "//" + registryHost + ":" + REGISTRYPORT + "/"
+                + serviceName;
+        try{
+        	ServerCongressoImpl serverRMI = new ServerCongressoImpl();
+            Naming.rebind(completeName, serverRMI);
+            System.out.println("Server RMI: Servizio \"" + serviceName
+                    + "\" registrato");
+        }
+        catch(Exception e){
+            System.err.println("Server RMI \"" + serviceName + "\": "
+                    + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+
     }
   }
-}
+
