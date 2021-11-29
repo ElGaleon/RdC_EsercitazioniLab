@@ -16,7 +16,7 @@ class ClientCongresso {
 		String registryRemotoHost = null;
 		String registryRemotoName = "RegistryRemoto";
 		String serviceName = "ServerCongresso";
-		String services;
+		String services[];
 		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
 		// Controllo dei parametri della riga di comando

@@ -99,11 +99,5 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
       e.printStackTrace();
       System.exit(1);
     }
-    try{
-      registryRemoto.aggiungiTag();
-    }
-    catch(Exception e){
-
-    }
   }
 }
