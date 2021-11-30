@@ -92,30 +92,34 @@ public class Server extends UnicastRemoteObject implements RemOp {
             char c;
             int i;
             boolean eliminata = false;
-            while ((st = br.readLine()) != null) {
-                if (riga != numLinea) { // riga diversa da quella che si vuole eliminare
-                    brOut.write(st+"\n");    // scrivo riga nel file modificato
-                } else {
-                    eliminata = true;
+            
+                while ((st = br.readLine()) != null) {
+                    if (riga != numLinea) { // riga diversa da quella che si vuole eliminare
+                        brOut.write(st+"\n");    // scrivo riga nel file modificato
+                    } else {
+                        eliminata = true;
+                    }
+                    riga++;
                 }
-                riga++;
-            }
+            
+            /**
+                while ((i=br.read()) != -1) {
+                    c = (char)i;
+                    if (riga != numLinea) { // riga diversa da quella che si vuole eliminare
+                        brOut.write(c);    // scrivo char riga nel file modificato
+                    } else {
+                        eliminata = true;
+                    }
+                    if(c=='\n')riga++; //se incontro fine riga, incremento la variabile
+                }
+            */
+            
             if(numLinea > riga){
                 br.close();
                 brOut.close();
                 fOut.delete();
                 throw new RemoteException("Numero di linea eccessivo\n");
             }
-           /* while ((i=br.read()) != -1) {
-            	c = (char)i;
-                if (riga != numLinea) { // riga diversa da quella che si vuole eliminare
-                    brOut.write(c);    // scrivo char riga nel file modificato
-                } else {
-                    eliminata = true;
-                }
-                if(c=='\n')riga++; //se incontro fine riga, incremento la variabile
-            }*/
-            
             br.close();
             brOut.close();
             if (eliminata == false) { // Restituisco eccezione se il numero di linea inserito e' maggiore delle righe del file
