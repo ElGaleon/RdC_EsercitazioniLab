@@ -1,5 +1,5 @@
 /**
- * ClientCongresso.java
+ * Client.java
  *
  */
 
@@ -8,14 +8,14 @@ import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 
-class ClientCongresso {
+class Client {
 
   // Avvio del Client RMI
 	public static void main(String[] args) {
 		int registryRemotoPort = 1099;
 		String registryRemotoHost = null;
 		String registryRemotoName = "RegistryRemoto";
-		String serviceName = "ServerCongresso";
+		String serviceName = null;//"ServerCongresso";
 		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
 		// Controllo dei parametri della riga di comando
@@ -33,30 +33,43 @@ class ClientCongresso {
 				System.exit(1);
 			}
 		}
-		
+
 		// 	Impostazione del SecurityManager
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new RMISecurityManager());
 
+        while(true){
 		// Connessione al servizio RMI remoto
 		try {
 			String completeRemoteRegistryName = "//" + registryRemotoHost + ":"
 					+ registryRemotoPort + "/" + registryRemotoName;
-			RegistryRemotoClient registryRemoto = 
-					(RegistryRemotoClient) Naming.lookup(completeRemoteRegistryName);
-			ServerCongresso serverRMI = 
-					(ServerCongresso) registryRemoto.cerca(serviceName);
-			System.out.println("ClientRMI: Servizio \"" + serviceName + "\" connesso");
-			
-			System.out.println("\nRichieste di servizio fino a fine file");
-			
+
+			RegistryRemotoTagClient registryRemoto =
+					(RegistryRemotoTagClient) Naming.lookup(completeRemoteRegistryName);
+            /*Chiedo all'utente di inserire un tag*/
+            System.out.println("Inserire un tag tra quelli consentiti(Inserire uno o più e premere invio)");
+            String[] tag=stdIn.readLine().split(" ");
+
+            String[] res=registryRemoto.cercaTag(tag);
+		    System.out.println("ClientRMI: trovati "+res.length+" server con i tag richiesti\n");
+            for (String s : res)
+                System.out.println(s+" ");
+
+
+            serviceName=res[0];
+
+            ServerInt serverRMI = (ServerInt) registryRemoto.cerca(serviceName);
+			System.out.println("\nClientRMI: Servizio \"" + serviceName + "\" connesso");
+
+			/*System.out.println("\nRichieste di servizio fino a fine file");
+
 			String service;
 			System.out.print("Servizio (R=Registrazione, P=Programma del congresso): ");
-			
+
 			while ((service = stdIn.readLine()) != null) {
-				
+
 				if (service.equals("R")) {
-					
+
 					boolean ok = false;
 					int g = 0;
 					System.out.print("Giornata (1-3)? ");
@@ -72,7 +85,7 @@ class ClientCongresso {
 					ok = false;
 					String sess = null;
 					System.out.print("Sessione (S1 - S12)? ");
-					
+
 					while (ok != true) {
 						sess = stdIn.readLine();
 						if (!sess.equals("S1") && !sess.equals("S2") && !sess.equals("S3")
@@ -103,7 +116,7 @@ class ClientCongresso {
 					int g = 0;
 					boolean ok = false;
 					System.out.print("Programma giornata (1-3)? ");
-					
+
 					while (ok != true) {
 						// intercettare la NumberFormatException
 						g = Integer.parseInt(stdIn.readLine());
@@ -116,18 +129,19 @@ class ClientCongresso {
 					}
 					System.out.println("Ecco il programma: ");
 					serverRMI.programma(g).stampa();
-					
+
 				} // P
 
 				else System.out.println("Servizio non disponibile");
-				
+
 				System.out.print("Servizio (R=Registrazione, P=Programma del congresso): ");
-			} // !EOF richieste utente
+			} // !EOF richieste utente*/
 
 		} catch (Exception e) {
 			System.err.println("ClientRMI: " + e.getMessage());
 			e.printStackTrace();
 			System.exit(2);
 		}
+        }//while indentato male
 	}
 }

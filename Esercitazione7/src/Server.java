@@ -1,5 +1,5 @@
 /**
- * ServerCongressoImpl.java
+ * Server.java
  * 		Implementazione del server
  * */
 
@@ -8,15 +8,16 @@ import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ServerCongressoImpl extends UnicastRemoteObject implements
-    ServerCongresso {
-  static Programma prog[];
+public class Server extends UnicastRemoteObject implements ServerInt{
+  /*static Programma prog[]*/;
 
+  //private String nome;
   // Costruttore
-  public ServerCongressoImpl() throws RemoteException {
+  public Server() throws RemoteException {
     super();
+    //this.nome=name;
   }
-
+/*
   // Richiede una prenotazione
   public int registrazione(int giorno, String sessione, String speaker)
       throws RemoteException {
@@ -48,35 +49,51 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
     System.out.println("Server RMI: richiesto programma del giorno " + giorno);
     return prog[giorno - 1];
   }
+*/
 
   // Avvio del Server RMI
   public static void main(String[] args) {
 
     // creazione programma
-    prog = new Programma[3];
+/*    prog = new Programma[3];
     for (int i = 0; i < 3; i++)
       prog[i] = new Programma();
+*/
     int registryRemotoPort = 1099;
     String registryRemotoName = "RegistryRemoto";
-    String serviceName = "ServerCongresso";
+    String serviceName = ""; // "ServerCongresso";
+    String[] tag=null;
+    boolean rp=false;// per vedere se c'è la porta o meno
 
     // Controllo dei parametri della riga di comando
-    if (args.length != 1 && args.length != 2) {
+    if (args.length <2) {
       System.out
-          .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero");
+          .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort] almeno un tag");
       System.exit(1);
     }
     String registryRemotoHost = args[0];
-    if (args.length == 2) {
-      try {
+    try {
         registryRemotoPort = Integer.parseInt(args[1]);
-      } catch (Exception e) {
-        System.out
-            .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero");
-        System.exit(2);
-      }
+        rp=true;
+    }catch (Exception e) {
+        rp=false;
+        /*System.out
+            .println("Sintassi: ServerCongressoImpl NomeHostRegistryRemoto [registryPort], registryPort intero tag");
+        System.exit(2);*/
+    }
+    if(rp && args.length>=3){
+        tag=new String[args.length-2];
+        for(int i=2;i<args.length;i++)
+            tag[i-2]=args[i];
+    }
+    else if(args.length>=2 && !rp){
+        tag=new String[args.length-1];
+        for(int i=1; i<args.length;i++)
+            tag[i-1]=args[i];
     }
 
+    serviceName="Server_"+tag[0];
+    System.out.println(serviceName+"\n");
     // Impostazione del SecurityManager
     if (System.getSecurityManager() == null) {
       System.setSecurityManager(new RMISecurityManager());
@@ -87,10 +104,12 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
         + registryRemotoPort + "/" + registryRemotoName;
 
     try {
-      RegistryRemotoServer registryRemoto = (RegistryRemotoServer) Naming
+      RegistryRemotoTagServer registryRemoto = (RegistryRemotoTagServer) Naming
           .lookup(completeRemoteRegistryName);
-      ServerCongressoImpl serverRMI = new ServerCongressoImpl();
+      Server serverRMI = new Server();
       registryRemoto.aggiungi(serviceName, serverRMI);
+      //associo il tag al nome logico
+      registryRemoto.associaTag(serviceName,tag);
       System.out.println("Server RMI: Servizio \"" + serviceName
           + "\" registrato");
     } catch (Exception e) {

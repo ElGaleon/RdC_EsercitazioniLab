@@ -59,7 +59,7 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
     int registryRemotoPort = 1099;
     String registryRemotoName = "RegistryRemoto";
     String serviceName = "ServerCongresso";
-
+    String[] tag={"Congresso","Bar"};
     // Controllo dei parametri della riga di comando
     if (args.length != 1 && args.length != 2) {
       System.out
@@ -87,10 +87,12 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements
         + registryRemotoPort + "/" + registryRemotoName;
 
     try {
-      RegistryRemotoServer registryRemoto = (RegistryRemotoServer) Naming
+      RegistryRemotoTagServer registryRemoto = (RegistryRemotoTagServer) Naming
           .lookup(completeRemoteRegistryName);
       ServerCongressoImpl serverRMI = new ServerCongressoImpl();
       registryRemoto.aggiungi(serviceName, serverRMI);
+      //associo il tag al nome logico
+      registryRemoto.associaTag(serviceName,tag);
       System.out.println("Server RMI: Servizio \"" + serviceName
           + "\" registrato");
     } catch (Exception e) {
