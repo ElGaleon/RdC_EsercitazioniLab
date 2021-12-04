@@ -10,17 +10,16 @@
 #include <rpc/rpc.h>
 
 FS_Out *file_scan_1_svc(char **nomeFile, struct svc_req *rp){
-    static FS_Out *result;
+    static FS_Out result;
     
-    free(result);
-    result = (FS_Out*) malloc(sizeof(FS_Out));
+    
     
     printf("Nome file ricevuto: %s\n", *nomeFile);
 
     int f;
     if((f = open(*nomeFile, O_RDONLY)) < 0){
         printf("Impossibile aprire file: %s\n", *nomeFile);
-        result->numChar = -1;
+        result.numChar = -1;
         return &result;
     }
     char c;
@@ -37,13 +36,13 @@ FS_Out *file_scan_1_svc(char **nomeFile, struct svc_req *rp){
     close(f);
     if(chars == 0){
         printf("Nessun carattere nel file\n");
-        result->numChar = -1;
+        result.numChar = -1;
         return &result;
     }
     printf("File: %s\tChars: %d\tWords: %d\tLines: %d\n", *nomeFile, chars, words, lines);
-    result->numChar= chars;
-    result->numWords = words;
-    result->numLines = lines;
+    result.numChar= chars;
+    result.numWords = words;
+    result.numLines = lines;
     return &result;
 
 }
@@ -52,31 +51,30 @@ int *dir_scan_1_svc(DirScan_In *d, struct svc_req *rp){
     static int result;
     DIR *dir;
     struct dirent * dd;
-    struct stat st;
-    int count = 0, size = 0;
-
+    int count = 0;
+    int fd;
+    char path[MAXNAMLEN];
     
     if((dir = opendir(d->direttorio)) == NULL){
-		result = -1;
+		result = -420;
 		return (&result);
 	}
     while ((dd = readdir(dir)) != NULL){
         if(dd->d_type == DT_REG){
-            printf("Trovato file %s\n", dd-> d_name);
-            stat(dd->d_name, &st);
-            size = st.st_size;
-            if(size > d->soglia){
-                count++;
+            sprintf(path,"%s/%s", d->direttorio, dd->d_name);
+            if((fd = open(path, O_RDONLY)) != -1){
+                if((lseek(fd,0,SEEK_END)) > d->soglia){
+                    close(fd);
+                    count++;
+                }
+            }else{
+                count = 69;
             }
         }
     }
     printf("Numero totale di file %d\n", count);
     closedir(dir);
     
-    if(count == 0){
-        result = -1;
-    }else{
-        result = count;
-    }
+    result = count;
     return &result;
 }

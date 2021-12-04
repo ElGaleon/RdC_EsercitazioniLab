@@ -16,7 +16,7 @@ int main(int argc, char **argv){
     char *server; 
     CLIENT *cl;
 
-    DirScan_In *d_Input;
+    DirScan_In d_Input;
     char *nomeFile;
 
     int *risDir;
@@ -75,10 +75,10 @@ int main(int argc, char **argv){
                 continue;
             }
 
-            d_Input = (DirScan_In*) malloc(sizeof(DirScan_In));
-            d_Input->direttorio = dirName;
-            d_Input->soglia = soglia;
-
+            
+            d_Input.direttorio = dirName;
+            d_Input.soglia = soglia;
+            printf("dirName: %s\tsoglia: %d\n", d_Input.direttorio, d_Input.soglia);
             risDir = dir_scan_1(&d_Input, cl);
             if(risDir == NULL){
                 printf("Servizio DirScan: Errore RPC\n");
@@ -93,7 +93,7 @@ int main(int argc, char **argv){
             }
 
             printf("Servizio DirScan: Risultato da %s %d\n", server, *risDir);
-            free(d_Input);
+            
             
         }else{
             printf("Servizio invalido\n");
