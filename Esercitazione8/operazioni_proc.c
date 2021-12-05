@@ -53,7 +53,6 @@ int *dir_scan_1_svc(DirScan_In *d, struct svc_req *rp){
     struct dirent * dd;
     int count = 0;
     int fd;
-    char path[MAXNAMLEN];
     
     if((dir = opendir(d->direttorio)) == NULL){
 		result = -420;
@@ -61,14 +60,11 @@ int *dir_scan_1_svc(DirScan_In *d, struct svc_req *rp){
 	}
     while ((dd = readdir(dir)) != NULL){
         if(dd->d_type == DT_REG){
-            sprintf(path,"%s/%s", d->direttorio, dd->d_name);
-            if((fd = open(path, O_RDONLY)) != -1){
+            if((fd = open(dd->d_name, O_RDONLY)) != -1){
                 if((lseek(fd,0,SEEK_END)) > d->soglia){
-                    close(fd);
                     count++;
                 }
-            }else{
-                count = 69;
+                close(fd);
             }
         }
     }
