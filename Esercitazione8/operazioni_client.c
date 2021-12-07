@@ -17,7 +17,7 @@ int main(int argc, char **argv){
     CLIENT *cl;
 
     DirScan_In d_Input;
-    char *nomeFile;
+    char nomeFile[MAX_NAME_LENGHT];
 
     int *risDir;
     FS_Out *f_Result;
@@ -38,7 +38,7 @@ int main(int argc, char **argv){
         if(strcmp("FS", service) == 0){
             printf("Servizio FileScan: inserisci il nome del file\n");
 
-            nomeFile = (char*) malloc(MAX_NAME_LENGHT);
+            //char nomeFile[MAX_NAME_LENGHT];
             gets(nomeFile);
 
             f_Result = file_scan_1(&nomeFile, cl);
