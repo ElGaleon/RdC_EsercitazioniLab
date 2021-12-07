@@ -87,7 +87,6 @@ int main(int argc, char **argv){
             }
             if (risDir < 0){
                 printf("Servizio DirScan: Errore nel risultato"); 
-                clnt_perror(cl, server);
                 printf("Quale servizio vuoi utilizzare?\nPer FileScan: FS\tPer DirScan: DS\n");
                 continue;
             }
