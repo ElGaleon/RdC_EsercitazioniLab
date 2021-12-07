@@ -28,6 +28,7 @@ FS_Out *file_scan_1_svc(char **nomeFile, struct svc_req *rp){
         if(c == ' '){
             words++;
         }else if(c == '\n'){
+            words++;
             lines++;
         }else{
             chars++;
