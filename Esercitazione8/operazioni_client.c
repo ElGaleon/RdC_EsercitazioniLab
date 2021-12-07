@@ -50,7 +50,6 @@ int main(int argc, char **argv){
             }
             if (f_Result->numChar == -1){
                 printf("Servizio FileScan: Errore nel risultato"); 
-                clnt_perror(cl, server);
                 printf("Quale servizio vuoi utilizzare?\nPer FileScan: FS\tPer DirScan: DS\n");
                 continue;
             }
