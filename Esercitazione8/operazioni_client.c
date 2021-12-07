@@ -56,8 +56,6 @@ int main(int argc, char **argv){
 
             printf("Servizio FileScan: Risultato da %s\nChars: %d\tWords: %d\tLines: %d\n", server, f_Result->numChar, f_Result->numWords, f_Result->numLines);
 
-            free(nomeFile);
-
         }else if(strcmp("DS", service) == 0){
             printf("Servizio DirScan: inserisci il nome del direttorio\n");
 
