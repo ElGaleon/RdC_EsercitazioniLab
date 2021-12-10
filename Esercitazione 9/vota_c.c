@@ -62,13 +62,17 @@ e
         if(tab == NULL) { clnt_perror(cl, host);
         exit(1);}
         printf("Stato di occupazione della tab \n");
-        //TODO stampare tabella in base all'inizializzazione
-        for(i =0; i <NUMFILE; i++)
-        { 
-            for(j=0; j<LUNGHFILA;j++)
-            printf("%c\t", tab->fila[i].posto[j]);
-            printf("\n");
-        }
+        
+        for( i= 0; i< N; i++){
+        printf("%s\t", tab.show[i].candidato);
+        printf("%s\t",tab.show[i].giudice);
+        printf("%c\t",tab.show[i].categoria);
+        printf("%s\t",tab.show[i].nomeFile);
+        printf("%c\t",tab.show[i].fase);
+       printf("%d\t", tab.show[i].voto);
+       printf("\n");
+    }
+        
     } // if G
     else
     printf("Argomento di ingresso errato \n");
