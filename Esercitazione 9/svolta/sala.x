@@ -2,7 +2,7 @@ const LUNGHFILA=7;
 const NUMFILE=10;
 
 struct Input{ char tipo ; int fila; int colonna;};
-struct Fila { char posto [LUNGHFILA];
+struct Fila { char posto [LUNGHFILA];};
 struct Sala { Fila fila[NUMFILE]; };
 program SALA {
     version SALAVERS{
