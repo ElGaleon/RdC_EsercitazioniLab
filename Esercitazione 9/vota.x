@@ -4,7 +4,7 @@ const MAXS = 256;
 
 
 struct Input{ char[MAXS] cand ; char op ;};
-struct Show { char[MAXS] candidato; char[MAXS] giudice; char categoria[N]; char[MAXS] nomeFile; char fase; int voto; };
+struct Show { char[MAXS] candidato; char[MAXS] giudice; char categoria; char[MAXS] nomeFile; char fase; int voto; };
 struct Tab { Show show[N]};
 program VOTA {
     version VOTAVERS{
