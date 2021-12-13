@@ -15,7 +15,7 @@ int main (int argc , char **argv)
     Tab *tab ; Input input;
     Elenco *elenco;
     char str[5]; char c, ok[256];
-    char candidato[50], op;
+    char candidato[50], op[5];
     int i , j, riga, col;
     if (argc != 2)
     {
@@ -38,18 +38,18 @@ int main (int argc , char **argv)
             scanf("%s", candidato); 
             
             printf("\nInserisci tipo operazione (A o S): ");
-             scanf("%c", &op); //leggo e controllo
-    while(op != 'A' && op!='S')
+             scanf("%s", op); //leggo e controllo
+    while(op[0] != '+' && op[0]!='-')
     {
-        printf("Lettera sbagliata! Inserisci A (aggiunta) o S (sottrazione): \n");
-        scanf("%c", &op);}
-    input.op = op;
+        printf("Simbolo sbagliato! Inserisci + (aggiunta) o - (sottrazione): \n");
+        scanf("%s", op);}
+    strcpy(input.op, op);
     strcpy(input.cand, candidato);
         
     gets(ok);//Consumo fine linea
     
     
-    ris= esprimi_voto_1_svc(&input, cl);
+    ris= esprimi_voto_1(&input, cl);
     // Invocazione remota
     if(ris == NULL) {clnt_perror (cl, host); exit(1); }
     if(*ris <0) printf("Problemi... \n");
@@ -59,7 +59,7 @@ int main (int argc , char **argv)
 
     else if(strcmp(ok,"G")==0)
     {// Invocazione remota
-        elenco= classifica_giudici_1_svc(in,cl);
+        elenco= classifica_giudici_1(in,cl);
         if(elenco == NULL) { clnt_perror(cl, host);
         exit(1);}
         printf("Stato di occupazione dell'elenco: giudici \n");
