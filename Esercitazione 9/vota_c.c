@@ -9,10 +9,11 @@
 #include <rpc/rpc.h>
 
 
-int main (int argc , char argv[])
+int main (int argc , char **argv)
 {   char *host ; CLIENT *cl;
     int *ris , *start_ok ; void * in;
     Tab *tab ; Input input;
+    Elenco *elenco;
     char str[5]; char c, ok[256];
     char candidato[50], op;
     int i , j, riga, col;
@@ -27,11 +28,11 @@ int main (int argc , char argv[])
     if (cl == NULL)
     {
         clnt_pcreateerror (host); exit (1);}
-e 
+
     printf("Inserire: \nG) per vedere i giudici \tV) per esprimere il voto  \t^D per terminare:");
     
-    while (gets (ok))
-    {   if(strcmp (ok,"V")==0)
+    while (gets(ok))
+    {   if(strcmp(ok,"V")==0)
         {
             printf("\nInserisci nome candidato: ");
             scanf("%s", candidato); 
@@ -48,7 +49,7 @@ e
     gets(ok);//Consumo fine linea
     
     
-    ris= esprimi_voto_1_svc(&input, c1);
+    ris= esprimi_voto_1_svc(&input, cl);
     // Invocazione remota
     if(ris == NULL) {clnt_perror (cl, host); exit(1); }
     if(*ris <0) printf("Problemi... \n");
@@ -56,14 +57,18 @@ e
     }   // if V
 
 
-    else if(strcmp(ok,"G")==0
+    else if(strcmp(ok,"G")==0)
     {// Invocazione remota
-        tab= classifica_giudici_1_svc(in,cl);
-        if(tab == NULL) { clnt_perror(cl, host);
+        elenco= classifica_giudici_1_svc(in,cl);
+        if(elenco == NULL) { clnt_perror(cl, host);
         exit(1);}
-        printf("Stato di occupazione della tab \n");
+        printf("Stato di occupazione dell'elenco: giudici \n");
         
         for( i= 0; i< N; i++){
+        printf("%s\n", elenco->nome[i].c);
+        }
+        
+        /*for( i= 0; i< N; i++){
         printf("%s\t", tab.show[i].candidato);
         printf("%s\t",tab.show[i].giudice);
         printf("%c\t",tab.show[i].categoria);
@@ -71,7 +76,7 @@ e
         printf("%c\t",tab.show[i].fase);
        printf("%d\t", tab.show[i].voto);
        printf("\n");
-    }
+    }*/
         
     } // if G
     else
