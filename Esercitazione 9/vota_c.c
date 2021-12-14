@@ -9,13 +9,15 @@
 #include <rpc/rpc.h>
 
 
-int main (int argc , char **argv)
+int main (int argc , char** argv)
 {   char *host ; CLIENT *cl;
     int *ris , *start_ok ; void * in;
     Tab *tab ; Input input;
+    
     Elenco *elenco;
     char str[5]; char c, ok[256];
-    char candidato[50], op[5];
+    char candidato[50];
+    char op[10];
     int i , j, riga, col;
     if (argc != 2)
     {
@@ -36,15 +38,32 @@ int main (int argc , char **argv)
         {
             printf("\nInserisci nome candidato: ");
             scanf("%s", candidato); 
+            /*gets(ok);
+            strcpy(candidato, ok);*/
+            printf("Candidato ricevuto %s", candidato);
             
             printf("\nInserisci numero specificando tipo di operazione (+ o -): ");
              scanf("%s", op); //leggo e controllo
+            /*gets(ok);
+            strcpy(op, ok);*/
+             printf("Numero ricevuto %s\n", op);
+            
     while(op[0] != '+' && op[0]!='-')
     {
         printf("Simbolo sbagliato! Inserisci + (aggiunta) o - (sottrazione): \n");
-        scanf("%s", op);}
-    strcpy(input.op, op);
+        scanf("%s", op);
+        /*gets(ok);
+        strcpy(op, ok);*/
+        printf("Numero ricevuto %s\n", op);
+    }
+    input.op = op;
+    input.cand = candidato;
+    
+    /*strcpy(input.op, op);
+     printf("\nstrcpy op ricevuto %s\n", input.op);
+     
     strcpy(input.cand, candidato);
+     printf("\nstrcpy cand ricevuto %s\n", input.cand);*/
         
     gets(ok);//Consumo fine linea
     

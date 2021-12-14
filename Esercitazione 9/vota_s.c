@@ -7,14 +7,8 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <rpc/rpc.h>
-/*
- col 0 = candidato
- col 1 = giudice
- col 2 = categoria
- col 3 = nome file
- col 4 = fase
- col 5 = voto
- */
+
+
 /*const N=7;//LUNGHFILA
 const NUMCOL=6;//NUMFILE*/
 
@@ -23,63 +17,36 @@ static Elenco e;
 static Tab tab;
 static int inizializzato = 0;// inizializzazione attuata
 
-/*void inizializza() //Possibilità 1
-{
-    int i, j;
-    if(inizializzato== 1) return;
-    //inizializzazione struttura dati
-    for( i= 0; i< N; i++){
-    for(j= 0; j <NUMCOL; j++){
-        if(j==NUMCOL-1) tab.riga[i].col[j]=-1;
-         else tab.riga[i].col[j]='L';
-         
-    }
-   
-    //Eventuale riempimento altri posti
-    tab.riga[1].col[0]="Brasco";
-    tab.riga[1].col[1]="Bowie";
-    tab.riga[1].col[2]='U';
-    tab.riga[1].col[3]="BrascoProfile.txt";
-    tab.riga[1].col[4]='A';
-    tab.riga[1].col[5]=100;
-    
-    tab.riga[2].col[0]="Viga";
-    tab.riga[2].col[1]="Winehouse";
-    tab.riga[2].col[2]='D';
-    tab.riga[2].col[3]="VigaProfile.txt";
-    tab.riga[2].col[4]='S';
-    tab.riga[2].col[5]=50;
-    inizializzato = 1;
-    printf("Terminata init struttura dati !\n");
-}*/
+
 
 void inizializza() //Possibilità 1
 {
+    printf("Inizializzo struttura dati !\n");
     int i, j;
     if(inizializzato== 1) return;
     //inizializzazione struttura dati
     for( i= 0; i< N; i++){
-       strcpy(tab.show[i].candidato , "L");
-       strcpy(tab.show[i].giudice , "L");
+       tab.show[i].candidato="L";
+       tab.show[i].giudice="L";
        tab.show[i].categoria= 'L';
-       strcpy(tab.show[i].nomeFile,"L");
+       tab.show[i].nomeFile="L";
        tab.show[i].fase='L';
        tab.show[i].voto= -1;
          
     }
    
     //Eventuale riempimento altri posti
-    strcpy(tab.show[2].candidato,"Brasco");
-    strcpy(tab.show[2].giudice,"Bowie");
+    tab.show[2].candidato="Brasco";
+    tab.show[2].giudice="Bowie";
     tab.show[2].categoria='U';
-    strcpy(tab.show[2].nomeFile,"BrascoProfile.txt");
+    tab.show[2].nomeFile="BrascoProfile.txt";
     tab.show[2].fase='A';
     tab.show[2].voto=100;
     
-    strcpy(tab.show[3].candidato,"Viga");
-    strcpy(tab.show[3].giudice,"Winehouse");
+    tab.show[3].candidato="Viga";
+    tab.show[3].giudice="Winehouse";
     tab.show[3].categoria='D';
-    strcpy( tab.show[3].nomeFile,"VigaProfile.txt");
+    tab.show[3].nomeFile="VigaProfile.txt";
     tab.show[3].fase='S';
     tab.show[3].voto=50;
     
@@ -99,23 +66,18 @@ int * esprimi_voto_1_svc(Input *input, struct svc_req *rqstp)
     inizializza();//Invoco l’inizializzazione
     int i;
     
-    /* for( i= 0; i< N; i++){
-        if(strcmp(tab.show[i].candidato, input->cand)==0){
-            if(strcmp(input->op, "A")==0){
-                tab.show[i].voto += 1;
-                result=0 ;
-            }
-            if((strcmp(input->op, "S")==0)&&(tab.show[i].voto>0)){
-                tab.show[i].voto -= 1;
-                result=0;
-            }else 
-	    result=-1;
-        }
-     }*/
-    
     for( i= 0; i< N; i++){
         if(strcmp(tab.show[i].candidato, input->cand)==0){
-                tab.show[i].voto += atoi(input->op);
+            if(input->op[0] == '+'){
+                input->op[0]=' '; 
+                tab.show[i].voto += atoi(input->op);}
+            if(input->op[0] == '-'){
+                input->op[0]=' '; 
+                if((tab.show[i].voto-atoi(input->op))>=0)
+                    tab.show[i].voto -= atoi(input->op);
+                
+            }
+            result=0;
         }
      }
      
@@ -135,7 +97,7 @@ void scambiaE(int a, int b, G* v);
 void quickSortE(G* a, int dim);
 void quickSortRE(G* a, int iniz, int fine);
 
-//TODO
+
 Elenco *classifica_giudici_1_svc(void *in, struct svc_req *rqstp)
 {
     inizializza(); //Invoco l’inizializzazione
@@ -145,11 +107,13 @@ Elenco *classifica_giudici_1_svc(void *in, struct svc_req *rqstp)
     int isIn = 0;
     static Elenco result;
     
+    printf("inizializzo array G");
     //inizializzo array G
      for(k=0; k<N; k++){
-               strcpy(g[k].nome, "L");
+               strcpy(g[k].nome,"L");
                 g[k].votoTot = 0;  
             }
+             printf("costruisco array G");
     //costruisco G
      for(int i= 0; i< N; i++){
          if(strcmp(tab.show[i].giudice, "L") != 0){//se il giudice nella main tab non è vuoto
@@ -167,13 +131,14 @@ Elenco *classifica_giudici_1_svc(void *in, struct svc_req *rqstp)
         }
     }
     
+     printf("ordino array G");
     //ordino G
      quickSortE(g, j);
     
-     
+      printf("assegno a result");
      //result
     for(int i=0, k=0; i<j; i++, k++){
-        strcpy(result.nome[i].c, g[k].nome);
+        result.nome[i].c= g[k].nome;
     }
     if(j==0) return NULL;
     
@@ -216,14 +181,14 @@ void quickSortRE(G* a, int iniz, int fine)
 		do  //trova la posizione del pivot 
 		{
 			while (i < j && compareE(a[i],pivot) < 0) i++; //compare
-			while (j > i&& compareE(a[j], pivot) >= 0) j--;
+			while (j > i && compareE(a[j], pivot) >= 0) j--;
 			if (i < j) scambiaE(i, j, a);
 		} while (i < j);
 		// determinati i due sottoinsiemi 
 	// posiziona il pivot 
 		if (i != iPivot && compareE(a[i],a[iPivot]) != 0)
 		{
-			scambiaE(i, iPivot, a); //occhio a scambia
+			scambiaE(i, iPivot, a);
 			iPivot = i;
 		}
 		// ricorsione sulle sottoparti, se necessario 
