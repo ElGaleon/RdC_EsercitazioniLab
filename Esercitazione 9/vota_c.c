@@ -37,7 +37,7 @@ int main (int argc , char **argv)
             printf("\nInserisci nome candidato: ");
             scanf("%s", candidato); 
             
-            printf("\nInserisci tipo operazione (A o S): ");
+            printf("\nInserisci numero specificando tipo di operazione (+ o -): ");
              scanf("%s", op); //leggo e controllo
     while(op[0] != '+' && op[0]!='-')
     {
@@ -67,16 +67,6 @@ int main (int argc , char **argv)
         for( i= 0; i< N; i++){
         printf("%s\n", elenco->nome[i].c);
         }
-        
-        /*for( i= 0; i< N; i++){
-        printf("%s\t", tab.show[i].candidato);
-        printf("%s\t",tab.show[i].giudice);
-        printf("%c\t",tab.show[i].categoria);
-        printf("%s\t",tab.show[i].nomeFile);
-        printf("%c\t",tab.show[i].fase);
-       printf("%d\t", tab.show[i].voto);
-       printf("\n");
-    }*/
         
     } // if G
     else
