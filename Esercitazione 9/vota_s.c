@@ -86,11 +86,13 @@ int * esprimi_voto_1_svc(Input *input, struct svc_req *rqstp)
             }
             result=0;
         }
-        if(result == -1){
+        
+     }
+     
+     if(result == -1){
             perror("il candidato non esiste!\n");
             exit(1);
         }
-     }
      
     return(&result);
 }//esprimi_voto
@@ -122,7 +124,6 @@ Elenco *classifica_giudici_1_svc(void *in, struct svc_req *rqstp)
     //inizializzo array G
      for(k=0; k<N; k++){
                strcpy(g[k].nome,"L");
-               printf(" nome init: %s\n",g[k].nome);
                 g[k].votoTot = 0;  
             }
              printf("costruisco array G\n");
