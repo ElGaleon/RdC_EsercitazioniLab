@@ -19,7 +19,7 @@ extern "C" {
 
 struct Input {
 	char *cand;
-	char *op;
+	char op;
 };
 typedef struct Input Input;
 

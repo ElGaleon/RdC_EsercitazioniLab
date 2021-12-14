@@ -3,7 +3,7 @@ const NUMCOL=6;
 const MAXS = 256;
 
 
-struct Input{ string cand <MAXS>; string op <MAXS>;};
+struct Input{ string cand <MAXS>; char op;};
 struct Show { string candidato <MAXS>; string giudice <MAXS>; char categoria; string nomeFile <MAXS>; char fase; int voto; };
 struct Tab { Show show[N] ; };
 

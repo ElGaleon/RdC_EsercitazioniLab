@@ -75,13 +75,11 @@ int * esprimi_voto_1_svc(Input *input, struct svc_req *rqstp)
     
     for( i= 0; i< N; i++){
         if(strcmp(tab.show[i].candidato, input->cand)==0){
-            if(input->op[0] == '+'){
-                input->op[0]=' '; 
-                tab.show[i].voto += atoi(input->op);}
-            if(input->op[0] == '-'){
-                input->op[0]=' '; 
-                if((tab.show[i].voto-atoi(input->op))>=0)
-                    tab.show[i].voto -= atoi(input->op);
+            if(input->op == '+'){
+                tab.show[i].voto += 1;}
+            if(input->op == '-'){
+                if((tab.show[i].voto-1)>=0)
+                    tab.show[i].voto -= 1;
                 
             }
             result=0;

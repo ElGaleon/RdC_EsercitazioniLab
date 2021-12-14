@@ -12,7 +12,7 @@ xdr_Input (XDR *xdrs, Input *objp)
 
 	 if (!xdr_string (xdrs, &objp->cand, MAXS))
 		 return FALSE;
-	 if (!xdr_string (xdrs, &objp->op, MAXS))
+	 if (!xdr_char (xdrs, &objp->op))
 		 return FALSE;
 	return TRUE;
 }

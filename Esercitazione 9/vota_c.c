@@ -17,7 +17,7 @@ int main (int argc , char** argv)
     Elenco *elenco;
     char str[5]; char c, ok[256];
     char candidato[50];
-    char op[10];
+    char op;
     int i , j, riga, col;
     if (argc != 2)
     {
@@ -40,21 +40,21 @@ int main (int argc , char** argv)
             scanf("%s", candidato); 
             /*gets(ok);
             strcpy(candidato, ok);*/
-            printf("Candidato ricevuto %s", candidato);
+            //printf("Candidato ricevuto %c", candidato);
             
             printf("\nInserisci numero specificando tipo di operazione (+ o -): ");
-             scanf("%s", op); //leggo e controllo
+             scanf("%c", op); //leggo e controllo
             /*gets(ok);
             strcpy(op, ok);*/
-             printf("Numero ricevuto %s\n", op);
+             //printf("Numero ricevuto %s\n", op);
             
-    while(op[0] != '+' && op[0]!='-')
+    while(op!='+' && op!='-')
     {
         printf("Simbolo sbagliato! Inserisci + (aggiunta) o - (sottrazione): \n");
-        scanf("%s", op);
+        scanf("%c", op);
         /*gets(ok);
         strcpy(op, ok);*/
-        printf("Numero ricevuto %s\n", op);
+        //printf("Numero ricevuto %s\n", op);
     }
     input.op = op;
     input.cand = candidato;
