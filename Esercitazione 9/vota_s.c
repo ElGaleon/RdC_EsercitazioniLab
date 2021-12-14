@@ -105,10 +105,11 @@ int * esprimi_voto_1_svc(Input *input, struct svc_req *rqstp)
                 tab.show[i].voto += 1;
                 result=0 ;
             }
-            if(strcmp(input->op, "S")==0){
+            if((strcmp(input->op, "S")==0)&&(tab.show[i].voto>0)){
                 tab.show[i].voto -= 1;
                 result=0;
-            }
+            }else 
+	    result=-1;
         }
      }*/
     
