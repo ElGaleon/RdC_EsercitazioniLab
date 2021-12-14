@@ -13,7 +13,7 @@
 const NUMCOL=6;//NUMFILE*/
 
 /*STATO SERVER*/
-static Elenco e;
+static Elenco elenco;
 static Tab tab;
 static int inizializzato = 0;// inizializzazione attuata
 
@@ -48,7 +48,14 @@ void inizializza() //Possibilità 1
     tab.show[3].categoria='D';
     tab.show[3].nomeFile="VigaProfile.txt";
     tab.show[3].fase='S';
-    tab.show[3].voto=50;
+    tab.show[3].voto=150;
+    
+    tab.show[4].candidato="Io";
+    tab.show[4].giudice="Mika";
+    tab.show[4].categoria='D';
+    tab.show[4].nomeFile="MioProfile.txt";
+    tab.show[4].fase='S';
+    tab.show[4].voto=110;
     
     inizializzato = 1;
     printf("Terminata init struttura dati !\n");
@@ -79,6 +86,10 @@ int * esprimi_voto_1_svc(Input *input, struct svc_req *rqstp)
             }
             result=0;
         }
+        if(result == -1){
+            perror("il candidato non esiste!\n");
+            exit(1);
+        }
      }
      
     return(&result);
@@ -107,13 +118,14 @@ Elenco *classifica_giudici_1_svc(void *in, struct svc_req *rqstp)
     int isIn = 0;
     static Elenco result;
     
-    printf("inizializzo array G");
+    printf("inizializzo array G\n");
     //inizializzo array G
      for(k=0; k<N; k++){
                strcpy(g[k].nome,"L");
+               printf(" nome init: %s\n",g[k].nome);
                 g[k].votoTot = 0;  
             }
-             printf("costruisco array G");
+             printf("costruisco array G\n");
     //costruisco G
      for(int i= 0; i< N; i++){
          if(strcmp(tab.show[i].giudice, "L") != 0){//se il giudice nella main tab non è vuoto
@@ -125,24 +137,30 @@ Elenco *classifica_giudici_1_svc(void *in, struct svc_req *rqstp)
             }
             if(!isIn){//inizializzazioni nome giudice e voto in G
                 strcpy(g[j].nome, tab.show[i].giudice);
+                 printf(" nome: %s\n",g[j].nome);
                  g[j].votoTot += tab.show[i].voto;
                 j++; //tengo il conto del riempimento di G
             }//altrimenti le operazioni che servivano sono già state fatte
+            isIn =0;
         }
     }
     
-     printf("ordino array G");
+     printf("ordino array G\n");
     //ordino G
      quickSortE(g, j);
     
-      printf("assegno a result");
+      printf("assegno a result\n");
      //result
     for(int i=0, k=0; i<j; i++, k++){
-        result.nome[i].c= g[k].nome;
+        elenco.nome[i].c= g[k].nome;
+         printf(" elenco.nome: %s\n",elenco.nome[i].c);
     }
-    if(j==0) return NULL;
+    if(j==0) {
+         printf(" result null\n");
+        return NULL;
+    }
     
-    return (&result);
+    return (&elenco);
     
 } //classifica_giudici
 
@@ -156,11 +174,7 @@ void scambiaE(int a, int b, G* v)
 
 int compareE(G v1, G v2) {//v[posMax] < v[i]
 	int result;
-
-	float tot1 = 0, tot2 = 0;
-
 	result = v1.votoTot - v2.votoTot;
-
 	return result;
 }
 
@@ -180,8 +194,8 @@ void quickSortRE(G* a, int iniz, int fine)
 		pivot = a[iPivot];
 		do  //trova la posizione del pivot 
 		{
-			while (i < j && compareE(a[i],pivot) < 0) i++; //compare
-			while (j > i && compareE(a[j], pivot) >= 0) j--;
+			while (i < j && compareE(a[i],pivot) > 0) i++; //compare
+			while (j > i && compareE(a[j], pivot) <= 0) j--;
 			if (i < j) scambiaE(i, j, a);
 		} while (i < j);
 		// determinati i due sottoinsiemi 
